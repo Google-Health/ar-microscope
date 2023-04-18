@@ -1,0 +1,47 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+new_local_repository(
+    name = "opencv",
+    build_file = "@//:opencv.BUILD",
+    path = "/usr",
+)
+
+# Bazel
+http_archive(
+    name = "rules_license",
+    urls = [
+        "https://github.com/bazelbuild/rules_license/releases/download/0.0.4/rules_license-0.0.4.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_license/releases/download/0.0.4/rules_license-0.0.4.tar.gz",
+    ],
+    sha256 = "6157e1e68378532d0241ecd15d3c45f6e5cfd98fc10846045509fb2a7cc9e381",
+)
+
+# serial
+http_archive(
+    name = "serial",
+    sha256 = "42836f9344105388dfa69e501da8cee75409a7e7b32916a1489e4952ec5fabed",
+    strip_prefix = "serial-33e5a31ab77011504c8e37d7e9c3b9fa4229e625",
+    urls = [
+       "https://github.com/wjwwood/serial/archive/33e5a31ab77011504c8e37d7e9c3b9fa4229e625.zip",
+    ],
+    build_file = "@//:serial.BUILD",
+)
+
+# TensorFlow
+local_repository(
+    name = "org_tensorflow",
+    path = "/tensorflow_src",
+)
+
+# Tensorflow WORKSPACE packages.
+load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
+tf_workspace3()
+
+load("@org_tensorflow//tensorflow:workspace2.bzl", "tf_workspace2")
+tf_workspace2()
+
+load("@org_tensorflow//tensorflow:workspace1.bzl", "tf_workspace1")
+tf_workspace1()
+
+load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
+tf_workspace0()

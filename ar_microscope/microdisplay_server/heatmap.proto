@@ -1,0 +1,63 @@
+// Copyright 2023 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// =============================================================================
+syntax = "proto2";
+
+package microdisplay_server;
+
+message InferenceCheckpoint {
+  enum Type {
+    UNSPECIFIED_CHECKPOINT = 0;
+
+    // Prepare image buffer for TensorFlow input.
+    PREPARE = 1;
+
+    // Copy image from camera.
+    GRAB_IMAGE = 2;
+
+    // Debayer the image to generate RGB image for TensorFlow input.
+    DEBAYER = 3;
+
+    // TensorFlow inference.
+    INFERENCE = 4;
+
+    // Display heatmap to microdisplay.
+    DISPLAY_HEATMAP = 5;
+
+    // End of the processing.
+    END = 6;
+  }
+}
+
+// Timestamps of each step. Each timestamp represents the timestamp at the
+// beginning of the step.
+message Timing {
+  optional InferenceCheckpoint.Type checkpoint_type = 1;
+
+  // Time elapsed from UNIX epoch in microseconds.
+  optional int64 timestamp_microseconds = 2;
+}
+
+message Heatmap {
+  // Heatmap image width.
+  optional int32 width = 1;
+
+  // Heatmap image height.
+  optional int32 height = 2;
+
+  // Heatmap binary.
+  optional bytes image_binary = 3;
+
+  repeated Timing timing = 4;
+}

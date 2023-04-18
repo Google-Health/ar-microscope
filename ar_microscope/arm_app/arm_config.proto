@@ -1,0 +1,124 @@
+// Copyright 2023 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// =============================================================================
+// Proto definitions for the configuration parameters used by the ARM.
+// copybara:strip_begin(google3-only)
+// More details on how settings are persisted, see go/arm-config.
+// copybara:strip_end
+//
+// Note that there are some
+// restrictions for the messages in this file. Specifically:
+//   1. Repeated fields should generally be avoided. If used, there must be
+//      field-specific custom logic that handles how the concatenated fields are
+//      processed.
+//   2. Proto fields should never be renamed or removed. They can be marked
+//      deprecated or reserved.
+
+syntax = "proto2";
+
+package arm_app;
+
+// Configuration parameters for a given model.
+message ModelConfig {
+  //
+  // Model key parameters
+  //
+
+  // The model config key consists of the model_type and objective. A default
+  // config should be provided with both model_type and objective fields empty.
+
+  // Model type: lymph, prostate, mitotic. This should match the model type
+  // strings.
+  optional string model_type = 1;
+
+  // Objective: 10x, 20x, 40x. This should match the objective strings.
+  optional string objective = 2;
+
+  //
+  // Prediction parameters
+  //
+
+  // Threshold for classifying a prediction as positive. The range is [0, 255].
+  optional uint32 positive_threshold = 3;
+
+  // The input patch size for a single inference from the model.
+  optional uint32 input_patch_size = 4;
+
+  // The prediction patch size a single inference from the model.
+  optional uint32 prediction_patch_size = 5;
+
+  //
+  // Display parameters
+  //
+
+  // Up-scaling factor before transformations are applied to the heatmap.
+  optional uint32 transformation_scaling = 6;
+
+  // Blur size to smooth the heatmap contour, in scaled heatmap pixels. If this
+  // is not positive, a straight heatmap contour is used for the model.
+  optional uint32 blur_size = 7;
+
+  // Use morphological opening (erosion followed by dilation).
+  optional bool use_morph_open = 9;
+
+  // Kernel size for the morphological opening. Note this transformation is done
+  // after Gaussian scaling and the units are scaled heatmap pixels.
+  optional uint32 morph_size = 10;
+
+  // Line width of the heatmap. Smaller widths are preferred for models with
+  // smaller prediction patch sizes.
+  optional uint32 heatmap_line_width = 8;
+}
+
+message MicrodisplayConfig {
+  // Offset of the microdisplay image from the top of the window.
+  optional int32 image_margin_top = 1;
+
+  // Offset of the microdisplay image from the left of the window.
+  optional int32 image_margin_left = 2;
+}
+
+// Numeric positions of the objective lenses on the nosepiece. These positions
+// can be found underneath the nosepiece (by looking at the nosepiece from the
+// stage).
+message ObjectivePositionConfig {
+  optional int32 position_2x = 4;
+  optional int32 position_4x = 5;
+  optional int32 position_10x = 1;
+  optional int32 position_20x = 2;
+  optional int32 position_40x = 3;
+}
+
+message ArmConfigProto {
+  // Model configs provide parameters that are specific to each model. A default
+  // config must be provided; its fields are the default values of fields that
+  // are not overridden by a specific model config.
+  //
+  // Specific model configs must have both the model type and objective
+  // included.
+  optional ModelConfig model_config_default = 4;
+
+  // If duplicate configs exist for the same model/objective combination, e.g.
+  // from a user-edited ARM config, the last config is used.
+  repeated ModelConfig custom_model_configs = 5;
+
+  optional MicrodisplayConfig microdisplay_config = 2;
+
+  optional ObjectivePositionConfig objective_positions = 3;
+
+  // Deprecated fields. The field names are included here to maintain backwards
+  // compatibility.
+  reserved 1;
+  reserved "model_configs";
+}

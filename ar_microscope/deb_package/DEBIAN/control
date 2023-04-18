@@ -1,0 +1,10 @@
+Package: ar-microscope
+Maintainer: ARM OSS Team <no-reply@google.com>
+Architecture: amd64
+Version: 1.0.0.20230417-0
+Description: AR Microscope Controller
+Depends: dijsdk (>= 2.1.0),
+  libopencv-core3.2,
+  libopencv-imgcodecs3.2,
+  libopencv-imgproc3.2,
+  qt5-default

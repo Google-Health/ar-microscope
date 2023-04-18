@@ -1,0 +1,56 @@
+// Copyright 2023 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// =============================================================================
+syntax = "proto2";
+
+package main_looper;
+
+// Next tag: 29
+enum ArmEvent {
+  UNSPECIFIED_EVENT = 0;
+  ARM_START = 1;
+  ARM_STOP = 2;
+
+  // Model selection.
+  CLICK_LYMPH = 3;
+  CLICK_PROSTATE = 4;
+  CLICK_MITOTIC = 16;
+  CLICK_CERVICAL = 23;
+
+  // Objective selection (used for Automatic Objective Switching as well).
+  CLICK_2X = 27;
+  CLICK_4X = 28;
+  CLICK_10X = 5;
+  CLICK_20X = 6;
+  CLICK_40X = 7;
+  CLICK_UNKNOWN_OBJECTIVE = 24;
+
+  // Model class selection.
+  TOGGLE_GLEASON_CLASS = 25;
+  TOGGLE_CERVICAL_CLASS = 26;
+
+  CLICK_SNAPSHOT = 10;
+  SET_BRIGHTNESS = 11;
+  TOGGLE_DISPLAY_HEATMAP_ON = 21;
+  TOGGLE_DISPLAY_HEATMAP_OFF = 22;
+  TOGGLE_DISPLAY_INFERENCE_ON = 17;
+  TOGGLE_DISPLAY_INFERENCE_OFF = 18;
+  TOGGLE_DISPLAY_CALIBRATION_TARGET_ON = 19;
+  TOGGLE_DISPLAY_CALIBRATION_TARGET_OFF = 20;
+  SET_EV_MIN = 13;
+  SET_EV_MAX = 14;
+  SET_EV_STEP_SIZE = 15;
+
+  reserved 8, 9, 12;
+}
