@@ -6,7 +6,20 @@ the build process will not work.
 NOTE: Ensure you have installed docker first:
 [Docker](https://docs.docker.com/engine/install/).
 
+## Setting Up Your ARM Machine
+
+You can set up the ARM machine later, once you have the ARM Debian. However, to
+install the Debian you build in the subsequent steps, you will need to set up an
+ARM machine that meets ARM's software requirements. Ensure your ARM machine has
+a CUDA enabled GPU by running `lspci | grep -i nvidia`. If you see an NVIDIA
+device listed you can use the `initial_setup.md` document, which is available [here](https://github.com/Google-Health/ar-microscope/blob/main/ar_microscope/build/initial_setup.md),
+to set up a machine that meets ARM's software requirements. You only need to run
+through these steps once. Be sure to reboot your machine once the setup is
+complete.
+
 ## Cloning and Building the ARM binary
+ARM builds happen within a Docker container. This means that you do not need to
+build ARM on the same machine that you will run the ARM software on.
 
 ### Cloning ARM's Drivers
 
@@ -79,14 +92,14 @@ then let it continue running in the background. Run the below command:
   foo@bar$ docker run -it --name arm-latest arm:latest
   ```
 
-If you see an error like *The container name "/arm-latest" is already in use by container ...*
-you may need to run `docker stop arm-latest` and `docker rm arm-latest` first.
+  If you see an error like *The container name "/arm-latest" is already in use by container ...*
+  you may need to run `docker stop arm-latest` and `docker rm arm-latest` first.
 
 2. Type Ctrl+P, Ctrl+Q to detach from the container and run it in the background.
 
 3. Get the version from the control file.  You can replace the `*` in
     `ar-microscope_*_amd64.deb` with the `Version` from the control file for
-    the <deb package name> below.
+    the <deb_package_name> below.
 
     ```shell
     foo@bar$ cat $ARM_DRIVERS_DIR/ar_microscope/deb_package/DEBIAN/control
@@ -95,12 +108,28 @@ you may need to run `docker stop arm-latest` and `docker rm arm-latest` first.
 4. The package can be copied out of the container with the following command:
 
   ```shell
-  foo@bar$ docker cp arm-latest:/home/$USER/ar_microscope/<deb package name> $ARM_DRIVERS_DIR
+  foo@bar$ docker cp arm-latest:/home/$USER/ar_microscope/<deb_package_name> $ARM_DRIVERS_DIR
    ```
 
-5. You can install the debian package on the ARM machine by running the
-following command:
+5. You can install the debian package on the ARM machine by running the following
+command:
 
   ```shell
-  foo@bar$ sudo dpkg -i $ARM_DRIVERS_DIR/<deb package name>
+  foo@bar$ sudo dpkg -i $ARM_DRIVERS_DIR/<deb_package_name>
   ```
+
+### Rebuilding ARM
+
+As long as you aren't modifying the Dockerfiles, or introducing new dependencies
+, ARM can be rebuilt via a script that can save significant time. The script is
+available [here](https://github.com/Google-Health/ar-microscope/blob/main/ar_microscope/build/rebuild.sh).
+You can run the following command to execute the script:
+
+```shell
+  foo@bar$ bash ~/arm/arm_drivers/ar_microscope/build/rebuild.sh <deb_package_version> <container_name_override> 
+```
+`deb_package_version` is the version from the control file above, and
+`container_name_override` is an optional override parameter in case your
+container is not named `arm-latest`.
+
+

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_
-#define THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_
+#ifndef AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_
+#define AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_
 
 #include "opencv2/core.hpp"
 
@@ -22,4 +22,4 @@ namespace image_processor {
 void RenderCalibrationTarget(cv::Mat* preview_image);
 }
 
-#endif  // THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_
+#endif  // AR_MICROSCOPE_IMAGE_PROCESSOR_IMAGE_UTILS_H_

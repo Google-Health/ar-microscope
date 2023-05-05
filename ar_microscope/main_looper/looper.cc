@@ -29,7 +29,7 @@
 #include "image_captor/image_captor_factory.h"
 #include "image_processor/inferer.h"
 #include "image_processor/tensorflow_inferer.h"
-#include "microdisplay_server/heatmap_util.h"
+#include "microdisplay_server/inference_timings.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 ABSL_FLAG(int32_t, delay, 0,
@@ -110,7 +110,7 @@ void Looper::Stop() {
 
 void Looper::SetObjectiveAndModelType(ObjectiveLensPower objective,
                                       ModelType model_type) {
-  absl::MutexLock unused_lock(&model_lock_);
+  absl::MutexLock model_lock(&model_lock_);
   should_update_model_.store(true);
   current_objective_ = objective;
   current_model_type_ = model_type;
@@ -155,7 +155,7 @@ tensorflow::Status Looper::LoopOnce() {
   timings_.AddTiming(*heatmap_);
 
   if (should_update_model_.load()) {
-    absl::MutexLock unused_lock(&model_lock_);
+    absl::MutexLock model_lock(&model_lock_);
     should_update_model_.store(false);
     const auto load_model_status =
         inferer_->LoadModel(current_objective_, current_model_type_);

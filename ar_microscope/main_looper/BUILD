@@ -53,6 +53,7 @@ qt5_library(
         "//image_processor:tensorflow_inferer",
         "//microdisplay_server:heatmap_cc_proto",
         "//microdisplay_server:heatmap_util",
+        "//microdisplay_server:inference_timings",
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )

@@ -14,8 +14,8 @@
 // =============================================================================
 // Class to run TensorFlow inference against the given image.
 
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_
+#ifndef AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_
+#define AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_
 
 #ifndef NO_TENSORFLOW
 
@@ -105,4 +105,4 @@ class TensorflowInferer : public Inferer {
 }  // namespace image_processor
 
 #endif  // NO_TENSORFLOW
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_
+#endif  // AR_MICROSCOPE_IMAGE_PROCESSOR_TENSORFLOW_INFERER_H_

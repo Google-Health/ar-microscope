@@ -89,7 +89,7 @@ int ParseObjectivePositionMessage(const std::string& message) {
   return result;
 }
 
-std::unique_ptr<serial::Serial> MaybeCreateSerialConnection(
+std::unique_ptr<serial::Serial> CreateSerialConnectionOrNull(
     const std::string& port) {
   try {
     return std::make_unique<serial::Serial>(
@@ -136,15 +136,15 @@ std::shared_ptr<ObjectiveSerial> ObjectiveSerial::GetObjectiveSerial() {
   return std::shared_ptr<ObjectiveSerial>(kObjectiveSerial);
 }
 
-std::unique_ptr<serial::Serial> ObjectiveSerial::FindObjectiveSerialPort() {
+std::unique_ptr<serial::Serial> ObjectiveSerial::FindObjectiveSerialPortOrNull() {
   std::string objective_port = absl::GetFlag(FLAGS_objective_serial_port);
   if (!objective_port.empty()) {
-    return MaybeCreateSerialConnection(objective_port);
+    return CreateSerialConnectionOrNull(objective_port);
   }
   const auto ports = serial::list_ports();
   for (const auto& port : ports) {
     if (!IsUsbPort(port.port)) continue;
-    auto maybe_objective_serial = MaybeCreateSerialConnection(port.port);
+    auto maybe_objective_serial = CreateSerialConnectionOrNull(port.port);
     if (maybe_objective_serial != nullptr) {
       int position = ReadPositionFromSerialPort(maybe_objective_serial.get());
       if (position >= 0) {
@@ -156,7 +156,7 @@ std::unique_ptr<serial::Serial> ObjectiveSerial::FindObjectiveSerialPort() {
 }
 
 void ObjectiveSerial::Initialize() {
-  serial_ = FindObjectiveSerialPort();
+  serial_ = FindObjectiveSerialPortOrNull();
   if (serial_ != nullptr) {
     LOG(INFO) << "Objective serial will be using port: " << serial_->getPort();
     initialized_.store(true);
@@ -167,7 +167,7 @@ void ObjectiveSerial::Initialize() {
 }
 
 tensorflow::Status ObjectiveSerial::StartListening() {
-  absl::MutexLock unused_lock_(&serial_mutex_);
+  absl::MutexLock serial_lock_(&serial_mutex_);
   // Log in for remote monitoring.
   serial_->write(absl::StrCat("1LOG IN", kEndOfLineMarker));
   const auto login_messages =
@@ -199,7 +199,7 @@ tensorflow::Status ObjectiveSerial::StartListening() {
   thread_ = std::make_unique<std::thread>([this]() {
     int failed_reads = 0;
     while (!to_exit_.load()) {
-      absl::MutexLock unused_lock_(&serial_mutex_);
+      absl::MutexLock serial_lock_(&serial_mutex_);
       if (failed_reads > kMaxFailedReads) {
         LOG(ERROR) << "Too many failed objective reads, shutting down "
                       "objective serial.";
@@ -221,6 +221,7 @@ tensorflow::Status ObjectiveSerial::StartListening() {
           const int position = ParseObjectivePositionMessage(last_message);
           if (position == 0) {
             // Objective is in transition.
+            failed_reads = 0;
             continue;
           } else if (position == -1) {
             ++failed_reads;
@@ -269,7 +270,7 @@ ObjectiveSerial::GetObjective() {
 }
 
 void ObjectiveSerial::AddCallback(ObjectiveChangeCallback callback) {
-  absl::MutexLock unused_lock_(&callbacks_mutex_);
+  absl::MutexLock serial_lock_(&callbacks_mutex_);
   callbacks_.emplace_back(callback);
 }
 

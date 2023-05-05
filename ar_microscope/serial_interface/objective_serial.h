@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_
-#define THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_
+#ifndef AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_
+#define AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_
 
 #include <atomic>
 #include <thread>  // NOLINT
@@ -61,7 +61,7 @@ class ObjectiveSerial {
 
   // Finds the serial port that corresponds to the objective control box. This
   // assumes that at most one objective control box is connected.
-  std::unique_ptr<serial::Serial> FindObjectiveSerialPort();
+  std::unique_ptr<serial::Serial> FindObjectiveSerialPortOrNull();
 
   // Reads the position from the serial. Returns -1 if no position was
   // retrieved.
@@ -79,17 +79,17 @@ class ObjectiveSerial {
   std::vector<ObjectiveChangeCallback> callbacks_;
 
   // Tracks whether the serial connection was initialized successfully.
-  std::atomic_bool initialized_{false};
+  std::atomic_bool initialized_ = {false};
 
   // Tracks whether the serial port is listening or not.
-  std::atomic_bool listening_ {false};
+  std::atomic_bool listening_ = {false};
 
   // Thread for listening for serial port messages.
-  std::unique_ptr<std::thread> thread_{nullptr};
+  std::unique_ptr<std::thread> thread_;
   // Tracks whether to shut down the listening thread.
-  std::atomic_bool to_exit_{false};
+  std::atomic_bool to_exit_ = {false};
 };
 
 }  // namespace serial
 
-#endif  // THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_
+#endif  // AR_MICROSCOPE_SERIAL_INTERFACE_OBJECTIVE_SERIAL_H_

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_
-#define THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_
+#ifndef AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_
+#define AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_
 
 #include <fstream>
 
@@ -37,4 +37,4 @@ Logger& GetLogger();
 
 }  // namespace main_looper
 
-#endif  // THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_
+#endif  // AR_MICROSCOPE_MAIN_LOOPER_LOGGER_H_

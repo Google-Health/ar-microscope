@@ -47,3 +47,16 @@ cc_library(
         "@org_tensorflow//tensorflow/core:lib",
     ],
 )
+
+cc_library(
+    name = "inference_timings",
+    srcs = ["inference_timings.cc"],
+    hdrs = ["inference_timings.h"],
+    deps = [
+        ":heatmap_cc_proto",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/time",
+        "@org_tensorflow//tensorflow/core:lib",
+    ],
+)

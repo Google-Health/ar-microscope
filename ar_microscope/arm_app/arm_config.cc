@@ -65,6 +65,10 @@ tensorflow::StatusOr<ArmConfigProto> ParseConfigFromFile(
 
 }  // namespace
 
+const MicrodisplayConfig& ArmConfig::GetMicrodisplayConfig() const {
+  return arm_config_proto_.microdisplay_config();
+}
+
 void ArmConfig::InitializeObjectivePositions(
     const ObjectivePositionConfig& objective_position_config) {
   
@@ -149,7 +153,7 @@ const ModelConfig& ArmConfig::GetModelConfig(
 }
 
 const image_processor::ObjectiveLensPower ArmConfig::GetObjectiveForPosition(
-    int position) {
+    int position) const {
   auto it = objective_from_position_map_.find(position);
   if (it == objective_from_position_map_.end()) {
     return image_processor::ObjectiveLensPower::

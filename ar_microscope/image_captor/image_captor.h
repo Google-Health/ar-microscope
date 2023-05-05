@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_
+#ifndef AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_
+#define AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_
 
 #include <functional>
 
@@ -36,9 +36,10 @@ class ImageCaptor {
   // memory for cv::Mat if necessary. If is_rgb is true, the output image
   // is in RGB format (with each color 8-bit), otherwise BGR.
   // Args:
-  //   is_rgb: Boolean to indicate whether the output format if RGB or BGR.
-  //   output: Output image.
-  //   on_image_captured: Callback called when the image is captured.
+  //   is_rgb:  Boolean to indicate whether the output format if RGB or BGR.
+  //   output: The output image.
+  //   on_image_captured: A callback function that is called when the image is
+  //     captured.
   virtual tensorflow::Status GetImage(
       bool is_rgb, cv::Mat* output,
       std::function<void()> on_image_captured = [] {});
@@ -92,4 +93,4 @@ class ImageCaptor {
 
 }  // namespace image_captor
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_
+#endif  // AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_H_

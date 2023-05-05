@@ -10,7 +10,7 @@ for ARM. You can find the ARM research paper [here](https://www.nature.com/artic
 ## Requirements
 
 ### Microscope Hardware
-* Olympus Microscope BX 43 series Microscope
+* Olympus Microscope BX 43 Series Microscope
 * Jenoptik ARM Modules including the ARM Camera & Microdisplay
 
 ### Desktop Hardware
@@ -25,7 +25,7 @@ More broadly, ARM supports:
 or [RTX](https://www.nvidia.com/en-us/deep-learning-ai/products/titan-rtx/)
   * [NVIDIA GTX 10 Series](https://www.nvidia.com/en-us/geforce/10-series/)
   * [NVIDIA RTX 20 Series](https://www.nvidia.com/en-us/geforce/20-series/)
-  * [NVIDIA RTX 30 Seiries](https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/)
+  * [NVIDIA RTX 30 Series](https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/)
 * x86_64
 
 Because of the necessity for backwards compatibility, our constraining factors
@@ -48,7 +48,8 @@ by running `build/initial_setup.md`.
 
 ### Building and Installing ARM
 
-See the [`README.md`](README) in `build`.
+See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/build/README.md)
+in `build`.
 
 ## Using ARM
 
@@ -83,7 +84,8 @@ to update the ARM Config. See the `Configuring ARM` for more details.
 
 ### Configuring ARM
 
-See the [`README.md`](README) in `deb_package`.
+See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/deb_package/README.md)
+in `deb_package`.
 
 ### Adding custom models to ARM
 
@@ -96,12 +98,14 @@ If you make any publication related to your use of ARM, please cite our
 [paper](https://www.nature.com/articles/s41591-019-0539-7) on the research
 behind ARM. However, you may not use Google’s name to endorse or promote your
 work without our permission.  To request our permission, contact us at
-arm-oss-team@google.com
+arm-oss-team@google.com.
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
+See [`CONTRIBUTING.md`](https://github.com/Google-Health/ar-microscope/blob/main/CONTRIBUTING.md)
+for details.
 
 ## License
 
-See [`LICENSE`](LICENSE) for details.
+See [`LICENSE`](https://github.com/Google-Health/ar-microscope/blob/main/LICENSE)
+for details.

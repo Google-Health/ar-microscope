@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_
-#define THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_
+#ifndef AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_
+#define AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_
 
 #include <string>
 
 #include "absl/container/flat_hash_map.h"
 #include "arm_app/arm_config.pb.h"
-#include "image_processor/image_processor.h"
 #include "image_processor/inferer.h"
 #include "tensorflow/core/lib/core/status.h"
 
@@ -27,35 +26,41 @@ namespace arm_app {
 
 class ArmConfig {
  public:
+  // Initializes the ArmConfig with the default and custom config files.
   tensorflow::Status Initialize(const std::string& default_config_filepath,
                                 const std::string& custom_config_filepath);
 
+  // Gets the ModelConfig for the specified model type and objective lens power.
   const ModelConfig& GetModelConfig(
       image_processor::ModelType model_type,
       image_processor::ObjectiveLensPower objective);
 
-  const MicrodisplayConfig& GetMicrodisplayConfig() {
-    return arm_config_proto_.microdisplay_config();
-  }
+  // Gets the MicrodisplayConfig.
+  const MicrodisplayConfig& GetMicrodisplayConfig() const;
 
+  // Gets the ObjectiveLensPower for the specified nosepiece position.
   const image_processor::ObjectiveLensPower GetObjectiveForPosition(
-      int position);
+      int position) const;
 
  private:
+  // Initializes the ObjectivePositions map.
   void InitializeObjectivePositions(
       const ObjectivePositionConfig& objective_position_config);
 
+  // The ArmConfigProto object.
   ArmConfigProto arm_config_proto_;
-  // Map from model_type + objective key to a model config.
+
+  // The map from model_type + objective key to a model config.
   absl::flat_hash_map<std::string, ModelConfig> model_config_map_;
-  // Map from nosepiece position to objective lens.
+
+  // The map from nosepiece position to objective lens.
   absl::flat_hash_map<int, image_processor::ObjectiveLensPower>
       objective_from_position_map_;
 };
 
-// Method for getting ArmConfig singleton. Must be initialized before first use.
+// Gets the ArmConfig singleton. Must be initialized before first use.
 ArmConfig& GetArmConfig();
 
 }  // namespace arm_app
 
-#endif  // THIRD_PARTY_PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_
+#endif  // AR_MICROSCOPE_ARM_APP_ARM_CONFIG_H_

@@ -56,11 +56,30 @@ qt5_library(
 )
 
 qt5_library(
+    name = "heatmap_view",
+    srcs = ["heatmap_view.cc"],
+    hdrs = ["heatmap_view.h"],
+    deps = [
+        ":arm_config",
+        "@opencv//:opencv",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/synchronization",
+        "//image_processor:image_utils",
+        "//image_processor:inferer",
+        "//microdisplay_server:heatmap_cc_proto",
+        "//microdisplay_server:heatmap_util",
+        "@org_tensorflow//tensorflow/core:lib",
+    ],
+)
+
+qt5_library(
     name = "microdisplay",
     srcs = ["microdisplay.cc"],
     hdrs = ["microdisplay.h"],
     deps = [
         ":arm_config",
+        ":heatmap_view",
         "@opencv//:opencv",
         "@com_google_absl//absl/flags:flag",
         "@com_google_absl//absl/memory",
@@ -116,7 +135,6 @@ qt5_library(
         ":arm_config_cc_proto",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/strings",
-        "//image_processor",
         "//image_processor:inferer","@com_google_protobuf//:protobuf",
         "@org_tensorflow//tensorflow/core:lib",
     ],

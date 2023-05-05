@@ -183,7 +183,7 @@ tensorflow::Status JenoptikCaptor::ReleaseImage() {
 tensorflow::Status JenoptikCaptor::SetRgbGains(double red_gain,
                                                double green_gain,
                                                double blue_gain) {
-  // In Jenoptik camera, hardware whitebalance settings doesn't affect
+  // In Jenoptik camera, hardware white balance settings doesn't affect
   // Bayer image. (It affects RGB image if output format is set so.)
   // We adjust RGB gains during debayer.
   debayer_.SetRgbGains(red_gain, green_gain, blue_gain);

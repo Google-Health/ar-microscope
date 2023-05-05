@@ -16,8 +16,8 @@
 // and showing heatmap result on microdisplay. It also manages Qt
 // application and windows.
 
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_
+#ifndef AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_
+#define AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_
 
 #include <atomic>
 #include <memory>
@@ -29,7 +29,7 @@
 #include "image_captor/image_captor.h"
 #include "image_processor/inferer.h"
 #include "microdisplay_server/heatmap.pb.h"
-#include "microdisplay_server/heatmap_util.h"
+#include "microdisplay_server/inference_timings.h"
 #include "tensorflow/core/lib/core/status.h"
 
 namespace main_looper {
@@ -90,7 +90,8 @@ class Looper {
   std::unique_ptr<microdisplay_server::Heatmap> heatmap_;
   microdisplay_server::InferenceTimings timings_;
 
-  std::atomic_bool should_update_model_{false};
+  // A flag indicating whether the model should be updated.
+  std::atomic_bool should_update_model_ = {false};
   absl::Mutex model_lock_;
   image_processor::ObjectiveLensPower current_objective_;
   image_processor::ModelType current_model_type_;
@@ -98,8 +99,11 @@ class Looper {
   arm_app::Previewer* previewer_;
   arm_app::Microdisplay* microdisplay_;
 
-  std::unique_ptr<std::thread> thread_{nullptr};
-  std::atomic_bool to_exit_{false};
+  // The thread that runs the looper.
+  std::unique_ptr<std::thread> thread_;
+
+  // A flag indicating whether the looper should exit.
+  std::atomic_bool to_exit_ = {false};
 
   DisplayWarningCallback display_warning_callback_;
 
@@ -112,4 +116,4 @@ class Looper {
 
 }  // namespace main_looper
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_
+#endif  // AR_MICROSCOPE_MAIN_LOOPER_LOOPER_H_

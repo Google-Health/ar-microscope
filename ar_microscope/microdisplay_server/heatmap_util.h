@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_
+#ifndef AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_
+#define AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_
 
 #include <vector>
 
 #include "opencv2/core.hpp"
-#include "absl/time/time.h"
 #include "image_processor/inferer.h"
 #include "microdisplay_server/heatmap.pb.h"
 
@@ -103,32 +102,6 @@ class HeatmapUtil {
   std::vector<uint8_t> heatmap_image_;
 };
 
-class InferenceTimings {
- public:
-  InferenceTimings();
-
-  void AddTiming(const Heatmap& heatmap);
-
-  static void SetTimingCheckpoint(InferenceCheckpoint::Type type,
-                                  Heatmap* heatmap);
-
- private:
-  void Clear();
-  std::string GetAverageDurationTime(InferenceCheckpoint::Type type);
-
-  static const absl::Time GetCheckpoint(const Heatmap& heatmap,
-                                        InferenceCheckpoint::Type type);
-
-  int64_t count_ = 0;
-  // Total duration in microseconds.
-  absl::Duration total_ = absl::ZeroDuration();
-
-  // Accumulated time for each step. Index number is equal to type number.
-  // Therefore, steps_[0] is empty, since there's no timing for
-  // UNSPECIFIED_CHECKPOINT.
-  std::vector<absl::Duration> steps_;
-};
-
 }  // namespace microdisplay_server
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_
+#endif  // AR_MICROSCOPE_MICRODISPLAY_SERVER_HEATMAP_UTIL_H_

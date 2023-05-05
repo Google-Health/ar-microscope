@@ -47,32 +47,11 @@ cc_test(
 )
 
 cc_library(
-    name = "image_processor",
-    srcs = ["image_processor.cc"],
-    hdrs = ["image_processor.h"],
-    deps = [
-        "@opencv//:opencv",
-        "@org_tensorflow//tensorflow/core:lib",
-    ],
-)
-
-cc_library(
     name = "image_utils",
     srcs = ["image_utils.cc"],
     hdrs = ["image_utils.h"],
     deps = [
         "@opencv//:opencv",
-    ],
-)
-
-cc_library(
-    name = "binarizer",
-    srcs = ["binarizer.cc"],
-    hdrs = ["binarizer.h"],
-    deps = [
-        ":image_processor",
-        "@opencv//:opencv",
-        "@org_tensorflow//tensorflow/core:lib",
     ],
 )
 

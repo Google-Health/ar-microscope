@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_
+#ifndef AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_
+#define AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_
 
 #include <QGridLayout>
 #include <QImage>
@@ -60,7 +60,7 @@ class Previewer : public QWidget {
       image_processor::ModelType model_type,
       image_processor::ObjectiveLensPower objective);
 
-  int GetCounter() { return counter_; }
+  int GetCounter() const { return counter_; }
 
  protected:
   void paintEvent(QPaintEvent* event) override;
@@ -96,16 +96,16 @@ class Previewer : public QWidget {
   std::unique_ptr<QImage> heatmap_image_;
   absl::Mutex preview_image_mutex_;
   absl::Mutex heatmap_image_mutex_;
-  std::atomic_bool display_heatmap_{false};
-  std::atomic_bool display_inference_{true};
+  std::atomic_bool display_heatmap_ = {false};
+  std::atomic_bool display_inference_ = {true};
   // Note that display calibration overrides display inference so that only the
   // calibration target is displayed.
-  std::atomic_bool display_calibration_target_{false};
+  std::atomic_bool display_calibration_target_ = {false};
 
   microdisplay_server::HeatmapUtil heatmap_util_;
   int heatmap_line_width_;
-  std::unique_ptr<std::thread> thread_{nullptr};
-  std::atomic_bool to_exit_{false};
+  std::unique_ptr<std::thread> thread_;
+  std::atomic_bool to_exit_ = {false};
 
   // `TakeSnaphot` puts the previewer in snapshot mode where the next update
   // takes the snapshot images and removes the previewer from snapshot mode.
@@ -124,4 +124,4 @@ class Previewer : public QWidget {
 
 }  // namespace arm_app
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_
+#endif  // AR_MICROSCOPE_MAIN_LOOPER_PREVIEWER_H_

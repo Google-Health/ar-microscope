@@ -21,16 +21,16 @@ HOME_DIR=/home/arm
 UPGRADE_DIR=$HOME_DIR/arm_upgrade
 DEPENDENCIES_DIR=$UPGRADE_DIR/dependency_packages
 
-# First install cuDNN packages and CUDA toolkit. Note that the order matters.
-sudo dpkg -i $DEPENDENCIES_DIR/libcudnn8_8.0.2.39-1+cuda11.0_amd64.deb
-sudo dpkg -i $DEPENDENCIES_DIR/libcudnn8-dev_8.0.2.39-1+cuda11.0_amd64.deb
-sudo dpkg -i $DEPENDENCIES_DIR/cuda-repo-ubuntu1804-11-0-local_11.0.3-450.51.06-1_amd64.deb
-
+# First download cuDNN packages and CUDA toolkit. Note that the order matters.
+# See the ARM's initial_setup document for more details on CUDA installation.
+sudo dpkg -i $DEPENDENCIES_DIR/libcudnn8_8.1.1.33-1+cuda11.2_amd64.deb
+sudo dpkg -i $DEPENDENCIES_DIR/libcudnn8-dev_8.1.1.33-1+cuda11.2_amd64.deb
+sudo dpkg -i $DEPENDENCIES_DIR/cuda-repo-ubuntu1804-11-2-local_11.2.2-460.32.03-1_amd64.deb
 # Add dependencies folder to apt sources.
 echo "deb [trusted=yes] file:${DEPENDENCIES_DIR} ./" \
                   | sudo tee -a /etc/apt/sources.list
 sudo apt-get update
-sudo apt -y install cuda-11-0
+sudo apt -y install cuda-11-2
 
 # Rerun ldconfig so that the newly install libraries can be found.
 sudo ldconfig
@@ -45,5 +45,7 @@ mkdir -p $HOME_DIR/arm_logs/snapshots
 ln -s $HOME_DIR/arm_logs/snapshots $HOME_DIR/Desktop/arm_snapshots
 
 # Run apt-hold command to prevent upgrades to critical packages.
-apt-mark hold cuda-11-0 libcudnn8 libcudnn8-dev libnccl-dev libopencv-core3.2 \
+apt-mark hold cuda-11-2 libcudnn8 libcudnn8-dev libnccl-dev libopencv-core3.2 \
     libopencv-imgcodecs3.2 libopencv-imgproc3.2 qt5-default
+
+echo "Please restart your machine to finish the CUDA installation."

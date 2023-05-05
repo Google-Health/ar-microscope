@@ -13,7 +13,9 @@
 // limitations under the License.
 // =============================================================================
 #include "image_captor/image_captor_factory.h"
+#ifdef CAMERA_JENOPTIK
 #include "image_captor/jenoptik_captor.h"
+#endif
 #include "absl/flags/flag.h"
 
 ABSL_FLAG(std::string, capture_device, "jenoptik",
@@ -25,10 +27,12 @@ namespace image_captor {
 ImageCaptor* ImageCaptorFactory::Create() {
   std::string device = absl::GetFlag(FLAGS_capture_device);
   LOG(INFO) << "Device type: " << device;
+#ifdef CAMERA_JENOPTIK
   constexpr char kDeviceJenoptik[] = "jenoptik";
   if (device == kDeviceJenoptik) {
     return new JenoptikCaptor();
   }
+#endif
 
   LOG(FATAL) << "Unsupported device type: " << device;
   return nullptr;

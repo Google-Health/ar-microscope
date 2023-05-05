@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_
+#ifndef AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_
+#define AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_
 
 #include "jenoptik/include/dijsdk.h"
 #include "jenoptik/include/dijsdkerror.h"
@@ -58,4 +58,4 @@ class JenoptikCaptor : public ImageCaptor {
 
 }  // namespace image_captor
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_
+#endif  // AR_MICROSCOPE_IMAGE_CAPTOR_JENOPTIK_CAPTOR_H_

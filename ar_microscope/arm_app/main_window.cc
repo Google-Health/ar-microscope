@@ -135,7 +135,6 @@ ArmEvent ObjectiveToEvent(ObjectiveLensPower objective) {
   }
 }
 
-
 ArmEvent ModelTypeToEvent(ModelType model_type) {
   switch (model_type) {
     case ModelType::LYNA:
@@ -285,7 +284,8 @@ void MainWindow::ObjectiveSelected(QWidget* button) {
   GetLogger().LogEvent(ObjectiveToEvent(objective));
 }
 
-QPushButton* MainWindow::GetButtonForObjective(ObjectiveLensPower objective) {
+QPushButton* MainWindow::GetButtonForObjective(
+    ObjectiveLensPower objective) const {
   QPushButton* objective_button;
   switch (objective) {
     case ObjectiveLensPower::OBJECTIVE_2x:
@@ -614,7 +614,6 @@ void MainWindow::SetUpObjectiveControls() {
   objective_box_->setLayout(objective_layout_.get());
   objective_box_->setStyleSheet(kControlGroupLabelStyle);
 }
-
 
 void MainWindow::SetUpBrightnessControls() {
   brightness_slider_ = absl::WrapUnique(

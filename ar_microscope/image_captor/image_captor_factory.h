@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_
+#ifndef AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_
+#define AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_
 
 #include "image_captor/image_captor.h"
 
@@ -28,4 +28,4 @@ class ImageCaptorFactory {
 
 }  // namespace image_captor
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_
+#endif  // AR_MICROSCOPE_IMAGE_CAPTOR_IMAGE_CAPTOR_FACTORY_H_

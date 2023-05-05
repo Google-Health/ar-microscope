@@ -71,7 +71,8 @@ RUN sed -i 's/\[\"\:internal\"\]/\[\"\/\/visibility\:public\"\]/' $TFDIR/tensorf
 # For more information on supported compute capabilities see: https://developer.nvidia.com/cuda-gpus.
 # 6.1: GTX 10xx and Titan X series
 # 7.5: RTX 20xx and Titan RTX series
-ENV TF_CUDA_COMPUTE_CAPABILITIES="6.1,7.5"
+# 8.6: RTX 30xx series
+ENV TF_CUDA_COMPUTE_CAPABILITIES="6.1,7.5,8.6"
 RUN ./configure
 
 ENV TMP="/tmp"

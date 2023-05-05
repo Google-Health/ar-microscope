@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // =============================================================================
-#ifndef PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
-#define PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
+#ifndef AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
+#define AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
 
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -137,7 +137,7 @@ class MainWindow : public QWidget {
   // unsupported objective is checked.
   void SelectObjectiveForModel(image_processor::ObjectiveLensPower objective);
   QPushButton* GetButtonForObjective(
-      image_processor::ObjectiveLensPower objective);
+      image_processor::ObjectiveLensPower objective) const;
 
   // Owned UI elements
   std::unique_ptr<QHBoxLayout> main_layout_;
@@ -244,4 +244,4 @@ class MainWindow : public QWidget {
 
 }  // namespace arm_app
 
-#endif  // PATHOLOGY_OFFLINE_AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
+#endif  // AR_MICROSCOPE_ARM_APP_MAIN_WINDOW_H_
