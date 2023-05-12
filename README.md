@@ -38,18 +38,18 @@ compute architectures 3.5 - 8.6.
 * Jenoptik Camera SDK (included with the Jenoptik ARM Modules)
 * Ubuntu 18.0.4
 * CUDA 11.2
-* All dependencies listed in `build/initial_setup.md`.
+* All dependencies listed in `ar_microscope/build/initial_setup.md`.
 
 ## Installing ARM
 
 ### Initial Setup
 Before building ARM you will need to install its dependencies. You can do this
-by running `build/initial_setup.md`.
+by running `ar_microscope/build/initial_setup.md`.
 
 ### Building and Installing ARM
 
-See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/build/README.md)
-in `build`.
+See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/ar_microscope/build/README.md)
+in `ar_microscope/build`.
 
 ## Using ARM
 
@@ -75,7 +75,7 @@ order to calibrate the ARM Microdisplay, you will need to run ARM via
 Terminal in calibration mode. To do this run the following:
 
 ```shell
-foo@bar$ bash usr/local/bin/--calibration_mode
+foo@bar$ bash usr/local/bin/ar_microscope --calibration_mode
 ```
 
 The ARM software will start in calibration mode, allowing you to adjust the left
@@ -84,8 +84,8 @@ to update the ARM Config. See the `Configuring ARM` for more details.
 
 ### Configuring ARM
 
-See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/deb_package/README.md)
-in `deb_package`.
+See the [`README.md`](https://github.com/Google-Health/ar-microscope/blob/main/ar_microscope/deb_package/README.md)
+in `ar_microscope/deb_package`.
 
 ### Adding custom models to ARM
 

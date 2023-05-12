@@ -14,7 +14,7 @@
 # =============================================================================
 # Default ARM config.
 #
-# proto-file: arm_app/arm_config.proto
+# proto-file: ar_microscope/arm_app/arm_config.proto
 # proto-message: ArmConfigProto
 
 ###
@@ -37,8 +37,64 @@ model_config_default {
 }
 
 custom_model_configs {
+  model_type: "prostate"
+  objective: "2x"
+  absolute_model_path: "/usr/local/share/arm_models/gleason_2x"
+  model_version: "gleason-sensitivity-20220708"
+}
+custom_model_configs {
+  model_type: "prostate"
+  objective: "4x"
+  absolute_model_path: "/usr/local/share/arm_models/gleason_4x"
+  model_version: "gleason-sensitivity-20220718"
+}
+custom_model_configs {
+  model_type: "prostate"
+  objective: "10x"
+  absolute_model_path: "/usr/local/share/arm_models/gleason_10x"
+  model_version: "gleason-sensitivity-20201012"
+}
+custom_model_configs {
+  model_type: "prostate"
+  objective: "20x"
+  absolute_model_path: "/usr/local/share/arm_models/gleason_20x"
+  model_version: "gleason-sensitivity-20201013"
+}
+custom_model_configs {
+  model_type: "lymph"
+  objective: "2x"
+  absolute_model_path: "/usr/local/share/arm_models/lyna_2x"
+  model_version: "lyna-sensitivity-20220629"
+}
+custom_model_configs {
+  model_type: "lymph"
+  objective: "4x"
+  absolute_model_path: "/usr/local/share/arm_models/lyna_4x"
+  model_version: "lyna-sensitivity-20220629"
+}
+custom_model_configs {
+  model_type: "lymph"
+  objective: "10x"
+  absolute_model_path: "/usr/local/share/arm_models/lyna_10x"
+  model_version: "lyna-sensitivity-20201012"
+}
+custom_model_configs {
+  model_type: "lymph"
+  objective: "20x"
+  absolute_model_path: "/usr/local/share/arm_models/lyna_20x"
+  model_version: "lyna-sensitivity-20201008"
+}
+custom_model_configs {
+  model_type: "lymph"
+  objective: "40x"
+  absolute_model_path: "/usr/local/share/arm_models/lyna_40x"
+  model_version: "lyna-sensitivity-20201008"
+}
+custom_model_configs {
   model_type: "mitotic"
   objective: "40x"
+  absolute_model_path: "/usr/local/share/arm_models/mitotic_40x"
+  model_version: "20210622_combined_mc_arm"
   input_patch_size: 129
   prediction_patch_size: 16
   transformation_scaling: 4
@@ -46,6 +102,36 @@ custom_model_configs {
   use_morph_open: true
   morph_size: 7
   heatmap_line_width: 2
+}
+custom_model_configs {
+  model_type: "cervical"
+  objective: "2x"
+  absolute_model_path: "/usr/local/share/arm_models/cervical_2x"
+  model_version: "20220708_cd_arm"
+}
+custom_model_configs {
+  model_type: "cervical"
+  objective: "4x"
+  absolute_model_path: "/usr/local/share/arm_models/cervical_4x"
+  model_version: "l20220708_cd_arm"
+}
+custom_model_configs {
+  model_type: "cervical"
+  objective: "10x"
+  absolute_model_path: "/usr/local/share/arm_models/cervical_10x"
+  model_version: "20211206_cd_arm"
+}
+custom_model_configs {
+  model_type: "cervical"
+  objective: "20x"
+  absolute_model_path: "/usr/local/share/arm_models/cervical_20x"
+  model_version: "20211206_cd_arm"
+}
+custom_model_configs {
+  model_type: "cervical"
+  objective: "40x"
+  absolute_model_path: "/usr/local/share/arm_models/cervical_40x"
+  model_version: "20211206_cd_arm"
 }
 
 microdisplay_config {

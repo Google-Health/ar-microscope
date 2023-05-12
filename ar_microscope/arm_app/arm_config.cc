@@ -71,7 +71,6 @@ const MicrodisplayConfig& ArmConfig::GetMicrodisplayConfig() const {
 
 void ArmConfig::InitializeObjectivePositions(
     const ObjectivePositionConfig& objective_position_config) {
-  
   if (objective_position_config.has_position_2x()) {
     objective_from_position_map_.emplace(
         objective_position_config.position_2x(),
@@ -128,6 +127,21 @@ tensorflow::Status ArmConfig::Initialize(
     model_config_map_[MakeModelKey(model_config.model_type(),
                                    model_config.objective())] =
         config_with_defaults;
+    configured_model_types_.emplace(
+        image_processor::StringToModelType(model_config.model_type()));
+
+    // Create mappings of model_types to objectives.
+    auto model_type =
+        image_processor::StringToModelType(model_config.model_type());
+    auto it = model_type_objective_map_.find(model_type);
+    if (it == model_type_objective_map_.end()) {
+      model_type_objective_map_.emplace(
+          model_type,
+          absl::flat_hash_set<image_processor::ObjectiveLensPower>());
+    }
+    auto objective_lens_power =
+        image_processor::StringToObjective(model_config.objective());
+    model_type_objective_map_[model_type].emplace(objective_lens_power);
   }
   if (!arm_config_proto_.has_objective_positions()) {
     return tensorflow::errors::FailedPrecondition(
@@ -152,12 +166,37 @@ const ModelConfig& ArmConfig::GetModelConfig(
   }
 }
 
-const image_processor::ObjectiveLensPower ArmConfig::GetObjectiveForPosition(
+const absl::flat_hash_set<image_processor::ModelType>&
+ArmConfig::GetConfiguredModelTypes() const {
+  return configured_model_types_;
+}
+
+bool ArmConfig::IsModelConfigOverridden(
+    image_processor::ModelType model_type,
+    image_processor::ObjectiveLensPower objective) {
+  auto it = model_config_map_.find(MakeModelKey(model_type, objective));
+  return (it != model_config_map_.end());
+}
+
+image_processor::ObjectiveLensPower ArmConfig::GetObjectiveForPosition(
     int position) const {
   auto it = objective_from_position_map_.find(position);
   if (it == objective_from_position_map_.end()) {
     return image_processor::ObjectiveLensPower::
         UNSPECIFIED_OBJECTIVE_LENS_POWER;
+  } else {
+    return it->second;
+  }
+}
+
+const absl::flat_hash_set<image_processor::ObjectiveLensPower>&
+ArmConfig::GetSupportedObjectivesForModelType(
+    image_processor::ModelType model_type) const {
+  static const auto empty_objectives =
+      new absl::flat_hash_set<image_processor::ObjectiveLensPower>();
+  auto it = model_type_objective_map_.find(model_type);
+  if (it == model_type_objective_map_.end()) {
+    return *empty_objectives;
   } else {
     return it->second;
   }

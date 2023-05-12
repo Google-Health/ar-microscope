@@ -36,37 +36,6 @@ ABSL_FLAG(int, num_gpus, 1, "Number of GPUs to use.");
 
 ABSL_FLAG(bool, tf_debug, false,
           "If true, logs things like device placement...");
-
-ABSL_FLAG(std::string, lyna_2x_directory, "arm_models/lyna_2x",
-          "Directory for the lyna 2x model.");
-ABSL_FLAG(std::string, lyna_4x_directory, "arm_models/lyna_4x",
-          "Directory for the lyna 4x model.");
-ABSL_FLAG(std::string, lyna_10x_directory, "arm_models/lyna_10x",
-          "Directory for the lyna 10x model.");
-ABSL_FLAG(std::string, lyna_20x_directory, "arm_models/lyna_20x",
-          "Directory for the lyna 20x model.");
-ABSL_FLAG(std::string, lyna_40x_directory, "arm_models/lyna_40x",
-          "Directory for the lyna 40x model.");
-ABSL_FLAG(std::string, gleason_2x_directory, "arm_models/gleason_2x",
-          "Directory for the gleason 2x model.");
-ABSL_FLAG(std::string, gleason_4x_directory, "arm_models/gleason_4x",
-          "Directory for the gleason 4x model.");
-ABSL_FLAG(std::string, gleason_10x_directory, "arm_models/gleason_10x",
-          "Directory for the gleason 10x model.");
-ABSL_FLAG(std::string, gleason_20x_directory, "arm_models/gleason_20x",
-          "Directory for the gleason 20x model.");
-ABSL_FLAG(std::string, mitotic_40x_directory, "arm_models/mitotic_40x",
-          "Directory for the mitotic 40x model.");
-ABSL_FLAG(std::string, cervical_2x_directory, "arm_models/cervical_2x",
-          "Directory for the cervical 2x model.");
-ABSL_FLAG(std::string, cervical_4x_directory, "arm_models/cervical_4x",
-          "Directory for the cervical 4x model.");
-ABSL_FLAG(std::string, cervical_10x_directory, "arm_models/cervical_10x",
-          "Directory for the cervical 10x model.");
-ABSL_FLAG(std::string, cervical_20x_directory, "arm_models/cervical_20x",
-          "Directory for the cervical 20x model.");
-ABSL_FLAG(std::string, cervical_40x_directory, "arm_models/cervical_40x",
-          "Directory for the cervical 40x model.");
 ABSL_FLAG(int, patch_size, 2575, "Inference patch size.");
 ABSL_FLAG(std::string, output_tensor_name, "ArmOutputTensor",
           "Output heatmap tensor name.");
@@ -187,74 +156,10 @@ tensorflow::Status TensorflowInferer::ProcessImage(cv::Mat* output) {
 
 tensorflow::Status TensorflowInferer::LoadModel(ObjectiveLensPower power,
                                                 ModelType model_type) {
-  std::string folder;
-  if (model_type == ModelType::LYNA) {
-    switch (power) {
-      case ObjectiveLensPower::OBJECTIVE_2x:
-        folder = absl::GetFlag(FLAGS_lyna_2x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_4x:
-        folder = absl::GetFlag(FLAGS_lyna_4x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_10x:
-        folder = absl::GetFlag(FLAGS_lyna_10x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_20x:
-        folder = absl::GetFlag(FLAGS_lyna_20x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_40x:
-        folder = absl::GetFlag(FLAGS_lyna_40x_directory);
-        break;
-      default:
-        break;
-    }
-  } else if (model_type == ModelType::GLEASON) {
-    switch (power) {
-      case ObjectiveLensPower::OBJECTIVE_2x:
-        folder = absl::GetFlag(FLAGS_gleason_2x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_4x:
-        folder = absl::GetFlag(FLAGS_gleason_4x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_10x:
-        folder = absl::GetFlag(FLAGS_gleason_10x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_20x:
-        folder = absl::GetFlag(FLAGS_gleason_20x_directory);
-        break;
-      default:
-        break;
-    }
-  } else if (model_type == ModelType::MITOTIC) {
-    switch (power) {
-      case ObjectiveLensPower::OBJECTIVE_40x:
-        folder = absl::GetFlag(FLAGS_mitotic_40x_directory);
-        break;
-      default:
-        break;
-    }
-  } else if (model_type == ModelType::CERVICAL) {
-    switch (power) {
-      case ObjectiveLensPower::OBJECTIVE_2x:
-        folder = absl::GetFlag(FLAGS_cervical_2x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_4x:
-        folder = absl::GetFlag(FLAGS_cervical_4x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_10x:
-        folder = absl::GetFlag(FLAGS_cervical_10x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_20x:
-        folder = absl::GetFlag(FLAGS_cervical_20x_directory);
-        break;
-      case ObjectiveLensPower::OBJECTIVE_40x:
-        folder = absl::GetFlag(FLAGS_cervical_40x_directory);
-        break;
-      default:
-        break;
-    }
-  }
-  if (!folder.empty()) {
+  if (arm_app::GetArmConfig().IsModelConfigOverridden(model_type, power)) {
+    std::string folder = arm_app::GetArmConfig()
+                             .GetModelConfig(model_type, power)
+                             .absolute_model_path();
     model_type_ = model_type;
     objective_ = power;
     new_input_tensors_needed_ = true;

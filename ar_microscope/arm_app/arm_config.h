@@ -18,6 +18,7 @@
 #include <string>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "arm_app/arm_config.pb.h"
 #include "image_processor/inferer.h"
 #include "tensorflow/core/lib/core/status.h"
@@ -35,12 +36,25 @@ class ArmConfig {
       image_processor::ModelType model_type,
       image_processor::ObjectiveLensPower objective);
 
+  // Gets the ModelTypes that were explicitly configured by users.
+  const absl::flat_hash_set<image_processor::ModelType>&
+  GetConfiguredModelTypes() const;
+
+  // Determines if the ModelConfig is explicitly specified by the user.
+  bool IsModelConfigOverridden(image_processor::ModelType model_type,
+                               image_processor::ObjectiveLensPower objective);
+
   // Gets the MicrodisplayConfig.
   const MicrodisplayConfig& GetMicrodisplayConfig() const;
 
   // Gets the ObjectiveLensPower for the specified nosepiece position.
-  const image_processor::ObjectiveLensPower GetObjectiveForPosition(
+  image_processor::ObjectiveLensPower GetObjectiveForPosition(
       int position) const;
+
+  // Gets the configured ObjectiveLensPower for the specified Model Type.
+  const absl::flat_hash_set<image_processor::ObjectiveLensPower>&
+  GetSupportedObjectivesForModelType(
+      image_processor::ModelType model_type) const;
 
  private:
   // Initializes the ObjectivePositions map.
@@ -52,6 +66,14 @@ class ArmConfig {
 
   // The map from model_type + objective key to a model config.
   absl::flat_hash_map<std::string, ModelConfig> model_config_map_;
+
+  // The map from model_type to supported objectives.
+  absl::flat_hash_map<image_processor::ModelType,
+                      absl::flat_hash_set<image_processor::ObjectiveLensPower>>
+      model_type_objective_map_;
+
+  // The hash set of configured model types.
+  absl::flat_hash_set<image_processor::ModelType> configured_model_types_;
 
   // The map from nosepiece position to objective lens.
   absl::flat_hash_map<int, image_processor::ObjectiveLensPower>

@@ -11,7 +11,7 @@ the brightness slider may have to be turned down to 0 before being re-adjusted
 to a low value.
 
 2. Run the ARM in calibration mode via command-line:
-`bash /usr/local/bin/--calibration_mode=1`
+`bash /usr/local/bin/ar_microscope --calibration_mode=1`
 
 3. Precisely center the target slide so that the concentric circles align with
 those shown in the ARM software.

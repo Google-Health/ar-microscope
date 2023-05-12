@@ -14,7 +14,7 @@
 # =============================================================================
 # Custom ARM config.
 #
-# proto-file: arm_app/arm_config.proto
+# proto-file: ar_microscope/arm_app/arm_config.proto
 # proto-message: ArmConfigProto
 
 microdisplay_config {

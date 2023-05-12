@@ -15,116 +15,113 @@
 #include "image_processor/inferer.h"
 
 #include <memory>
+#include <string>
 
 #include "opencv2/imgproc.hpp"
+#include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
 
 namespace image_processor {
 namespace {
 
-// Model versions (for logging).
-constexpr char kGleason2x[] = "gleason-sensitivity-20220708";
-constexpr char kGleason4x[] = "gleason-sensitivity-20220718";
-constexpr char kGleason10x[] = "gleason-sensitivity-20201012";
-constexpr char kGleason20x[] = "gleason-sensitivity-20201013";
-constexpr char kLyna2x[] = "lyna-sensitivity-20220629";
-constexpr char kLyna4x[] = "lyna-sensitivity-20220629";
-constexpr char kLyna10x[] = "lyna-sensitivity-20201012";
-constexpr char kLyna20x[] = "lyna-sensitivity-20201008";
-constexpr char kLyna40x[] = "lyna-sensitivity-20201008";
-constexpr char kMitotic40x[] = "20210622_combined_mc_arm";
-constexpr char kCervical2x[] = "20220708_cd_arm";
-constexpr char kCervical4x[] = "20220708_cd_arm";
-constexpr char kCervical10x[] = "20211206_arm";
-constexpr char kCervical20x[] = "20211206_arm";
-constexpr char kCervical40x[] = "20211206_arm";
-
+const absl::flat_hash_map<ObjectiveLensPower, std::string>
+    kObjectiveLensPowerToString = {
+        {ObjectiveLensPower::UNSPECIFIED_OBJECTIVE_LENS_POWER, "Unspecified"},
+        {ObjectiveLensPower::OBJECTIVE_2x, "2x"},
+        {ObjectiveLensPower::OBJECTIVE_4x, "4x"},
+        {ObjectiveLensPower::OBJECTIVE_10x, "10x"},
+        {ObjectiveLensPower::OBJECTIVE_20x, "20x"},
+        {ObjectiveLensPower::OBJECTIVE_40x, "40x"},
+};
+const absl::flat_hash_map<std::string, ObjectiveLensPower>
+    kStringToObjectiveLensPower = {
+        {"Unspecified", ObjectiveLensPower::UNSPECIFIED_OBJECTIVE_LENS_POWER},
+        {"2x", ObjectiveLensPower::OBJECTIVE_2x},
+        {"4x", ObjectiveLensPower::OBJECTIVE_4x},
+        {"10x", ObjectiveLensPower::OBJECTIVE_10x},
+        {"20x", ObjectiveLensPower::OBJECTIVE_20x},
+        {"40x", ObjectiveLensPower::OBJECTIVE_40x},
+};
 constexpr char kUnknownModel[] = "unknown-model";
+
+const absl::flat_hash_map<std::string, ModelType> kStringToModelType = {
+    {"lymph", ModelType::LYNA},
+    {"prostate", ModelType::GLEASON},
+    {"mitotic", ModelType::MITOTIC},
+    {"cervical", ModelType::CERVICAL},
+};
+
+const absl::flat_hash_map<ModelType, std::string> kModelTypeToString = {
+    {ModelType::LYNA, "lymph"},
+    {ModelType::GLEASON, "prostate"},
+    {ModelType::MITOTIC, "mitotic"},
+    {ModelType::CERVICAL, "cervical"},
+};
+constexpr char kUnspecifiedModelType[] = "UNSPECIFIED_MODEL_TYPE";
+
+const absl::flat_hash_map<ModelType, std::string> kModelTypeToPrettyString = {
+    {ModelType::LYNA, "Lymph"},
+    {ModelType::GLEASON, "Prostate"},
+    {ModelType::MITOTIC, "Mitotic"},
+    {ModelType::CERVICAL, "Cervical"},
+};
+constexpr char kUnspecifiedPrettyModelType[] = "Unknown Model";
 
 }  // namespace
 
 std::string ObjectiveToString(ObjectiveLensPower objective) {
-  switch (objective) {
-    case ObjectiveLensPower::OBJECTIVE_2x:
-      return "2x";
-    case ObjectiveLensPower::OBJECTIVE_4x:
-      return "4x";
-    case ObjectiveLensPower::OBJECTIVE_10x:
-      return "10x";
-    case ObjectiveLensPower::OBJECTIVE_20x:
-      return "20x";
-    case ObjectiveLensPower::OBJECTIVE_40x:
-      return "40x";
-    default:
-      return "UNSPECIFIED_OBJECTIVE_LENS_POWER";
+  auto it = kObjectiveLensPowerToString.find(objective);
+
+  // If the iterator points to the end of the map, the key is not found.
+  if (it == kObjectiveLensPowerToString.end()) {
+    return kUnknownModel;
+  } else {
+    return it->second;
+  }
+}
+
+ObjectiveLensPower StringToObjective(std::string objective) {
+  auto it = kStringToObjectiveLensPower.find(objective);
+
+  // If the iterator points to the end of the map, the key is not found.
+  if (it == kStringToObjectiveLensPower.end()) {
+    return ObjectiveLensPower::UNSPECIFIED_OBJECTIVE_LENS_POWER;
+  } else {
+    return it->second;
   }
 }
 
 std::string ModelTypeToString(ModelType model_type) {
-  switch (model_type) {
-    case ModelType::LYNA:
-      return "lymph";
-    case ModelType::GLEASON:
-      return "prostate";
-    case ModelType::MITOTIC:
-      return "mitotic";
-    case ModelType::CERVICAL:
-      return "cervical";
-    default:
-      return "UNSPECIFIED_MODEL_TYPE";
+  auto it = kModelTypeToString.find(model_type);
+
+  // If the iterator points to the end of the map, the key is not found.
+  if (it == kModelTypeToString.end()) {
+    return kUnspecifiedModelType;
+  } else {
+    return it->second;
   }
 }
 
-std::string GetModelVersion(ModelType model_type,
-                            ObjectiveLensPower objective) {
-  if (model_type == ModelType::LYNA &&
-      objective == ObjectiveLensPower::OBJECTIVE_2x) {
-    return kLyna2x;
-  } else if (model_type == ModelType::LYNA &&
-      objective == ObjectiveLensPower::OBJECTIVE_4x) {
-    return kLyna4x;
-  } else if (model_type == ModelType::LYNA &&
-      objective == ObjectiveLensPower::OBJECTIVE_10x) {
-    return kLyna10x;
-  } else if (model_type == ModelType::LYNA &&
-             objective == ObjectiveLensPower::OBJECTIVE_20x) {
-    return kLyna20x;
-  } else if (model_type == ModelType::LYNA &&
-             objective == ObjectiveLensPower::OBJECTIVE_40x) {
-    return kLyna40x;
-  } else if (model_type == ModelType::GLEASON &&
-             objective == ObjectiveLensPower::OBJECTIVE_2x) {
-    return kGleason2x;
-  } else if (model_type == ModelType::GLEASON &&
-             objective == ObjectiveLensPower::OBJECTIVE_4x) {
-    return kGleason4x;
-  } else if (model_type == ModelType::GLEASON &&
-             objective == ObjectiveLensPower::OBJECTIVE_10x) {
-    return kGleason10x;
-  } else if (model_type == ModelType::GLEASON &&
-             objective == ObjectiveLensPower::OBJECTIVE_20x) {
-    return kGleason20x;
-  } else if (model_type == ModelType::MITOTIC &&
-             objective == ObjectiveLensPower::OBJECTIVE_40x) {
-    return kMitotic40x;
-  } else if (model_type == ModelType::CERVICAL &&
-             objective == ObjectiveLensPower::OBJECTIVE_2x) {
-    return kCervical2x;
-  } else if (model_type == ModelType::CERVICAL &&
-             objective == ObjectiveLensPower::OBJECTIVE_4x) {
-    return kCervical4x;
-  } else if (model_type == ModelType::CERVICAL &&
-             objective == ObjectiveLensPower::OBJECTIVE_10x) {
-    return kCervical10x;
-  } else if (model_type == ModelType::CERVICAL &&
-             objective == ObjectiveLensPower::OBJECTIVE_20x) {
-    return kCervical20x;
-  } else if (model_type == ModelType::CERVICAL &&
-             objective == ObjectiveLensPower::OBJECTIVE_40x) {
-    return kCervical40x;
+ModelType StringToModelType(std::string model_type) {
+  auto it = kStringToModelType.find(model_type);
+
+  // If the iterator points to the end of the map, the key is not found.
+  if (it == kStringToModelType.end()) {
+    return ModelType::UNSPECIFIED_MODEL_TYPE;
   } else {
-    return kUnknownModel;
+    return it->second;
+  }
+}
+
+std::string ModelTypeToPrettyString(ModelType model_type) {
+  auto it = kModelTypeToPrettyString.find(model_type);
+
+  // If the iterator points to the end of the map, the key is not found.
+  if (it == kModelTypeToPrettyString.end()) {
+    return kUnspecifiedPrettyModelType;
+  } else {
+    return it->second;
   }
 }
 

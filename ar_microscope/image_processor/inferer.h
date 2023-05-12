@@ -42,6 +42,8 @@ enum class ObjectiveLensPower {
 
 std::string ObjectiveToString(ObjectiveLensPower objective);
 
+ObjectiveLensPower StringToObjective(std::string objective);
+
 enum class ModelType {
   UNSPECIFIED_MODEL_TYPE,
   LYNA,
@@ -52,7 +54,9 @@ enum class ModelType {
 
 std::string ModelTypeToString(ModelType model_type);
 
-std::string GetModelVersion(ModelType model_type, ObjectiveLensPower objective);
+std::string ModelTypeToPrettyString(ModelType model_type);
+
+ModelType StringToModelType(std::string model_type);
 
 // Classes of the output indices of the Lyna model.
 enum class LynaClasses : int {

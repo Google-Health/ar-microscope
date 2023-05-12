@@ -247,7 +247,9 @@ void Previewer::TakeSnapshot(ObjectiveLensPower objective, ModelType model_type,
   auto metadata = absl::StrFormat(
       "{model_version: %s, model_type: %s, objective: %s, target_brightness: "
       "%d, timestamp: %d}",
-      image_processor::GetModelVersion(model_type, objective),
+      arm_app::GetArmConfig()
+          .GetModelConfig(model_type, objective)
+          .model_version(),
       image_processor::ModelTypeToString(model_type),
       image_processor::ObjectiveToString(objective), target_brightness,
       epoch_seconds);

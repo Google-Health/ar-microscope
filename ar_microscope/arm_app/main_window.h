@@ -30,7 +30,9 @@
 #include <atomic>
 #include <functional>
 #include <memory>
+#include <string>
 
+#include "absl/container/btree_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/synchronization/mutex.h"
 #include "arm_app/microdisplay.h"
@@ -150,6 +152,9 @@ class MainWindow : public QWidget {
 
   std::unique_ptr<QGroupBox> model_type_box_;
   std::unique_ptr<QVBoxLayout> model_type_layout_;
+  absl::btree_map<image_processor::ModelType, std::unique_ptr<QPushButton>>
+      model_buttons_;
+
   std::unique_ptr<QPushButton> button_lyna_;
   std::unique_ptr<QPushButton> button_gleason_;
   std::unique_ptr<QPushButton> button_mitotic_;

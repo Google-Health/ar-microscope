@@ -31,6 +31,7 @@
 #include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
 #include "absl/synchronization/mutex.h"
+#include "arm_app/arm_config.h"
 #include "arm_app/microdisplay.h"
 #include "image_processor/inferer.h"
 #include "image_processor/tensorflow_inferer.h"
@@ -61,10 +62,6 @@ constexpr char kModelClassProperty[] = "ModelClass";
 // User facing strings.
 constexpr char kArmAppTitle[] = "AR Microscope [Research Use Only]";
 constexpr char kModelTypeLabel[] = "Select model type";
-constexpr char kLynaModelLabel[] = "Lymph";
-constexpr char kGleasonModelLabel[] = "Prostate";
-constexpr char kMitoticModelLabel[] = "Mitotic";
-constexpr char kCervicalModelLabel[] = "Cervical";
 constexpr char kObjectiveLabel[] = "Select objective";
 constexpr char kBrightnessLabel[] = "Adjust brightness";
 constexpr char kSnapshotLabel[] = "Take snapshot";
@@ -184,8 +181,22 @@ MainWindow::MainWindow(Microdisplay* microdisplay)
   objective_button->setChecked(true);
   active_objective_button_ = objective_button;
   UpdateDisabledObjectives();
-  button_lyna_->setChecked(true);
-  active_model_type_button_ = button_lyna_.get();
+
+  if (model_buttons_.find(kInitialModelType) != model_buttons_.end()) {
+    const auto it = model_buttons_.find(kInitialModelType);
+    it->second->setChecked(true);
+    active_model_type_button_ = it->second.get();
+  } else {
+    const auto it = model_buttons_.begin();
+    if (it == model_buttons_.end()) {
+      LOG(WARNING)
+          << "Failed to set initial model. Check your Model Configuration.";
+    } else {
+      it->second->setChecked(true);
+      active_model_type_button_ = it->second.get();
+      current_model_type_ = it->first;
+    }
+  }
 
   auto display_warning_callback = [this](const std::string& message) {
     absl::MutexLock unused_lock(&warning_lock_);
@@ -330,24 +341,50 @@ void MainWindow::ModelTypeSelected(QWidget* button) {
     active_model_type_button_->setChecked(false);
   }
   if (!AutomaticObjectiveSwitchingIsOn()) {
-    // We do not support 40x for gleason, so we default to 10x if it is
-    // selected.
-    button_40x_->setDisabled(button == button_gleason_.get());
-    if (button == button_gleason_.get() &&
-        active_objective_button_ == button_40x_.get()) {
-      SelectObjectiveForModel(ObjectiveLensPower::OBJECTIVE_10x);
-    }
+    for (const auto& model_button : model_buttons_) {
+      if (button == model_button.second.get()) {
+        const auto supported_objectives =
+            arm_app::GetArmConfig().GetSupportedObjectivesForModelType(
+                model_button.first);
 
-    // We do not support 2x, 4x, 10x, or 20x models for mitotic.
-    button_2x_->setDisabled(button == button_mitotic_.get());
-    button_4x_->setDisabled(button == button_mitotic_.get());
-    button_10x_->setDisabled(button == button_mitotic_.get());
-    button_20x_->setDisabled(button == button_mitotic_.get());
+        // Set any unsupported buttons to disabled.
+        button_2x_->setDisabled(
+            supported_objectives.find(
+                image_processor::ObjectiveLensPower::OBJECTIVE_2x) ==
+            supported_objectives.end());
+        button_4x_->setDisabled(
+            supported_objectives.find(
+                image_processor::ObjectiveLensPower::OBJECTIVE_4x) ==
+            supported_objectives.end());
+        button_10x_->setDisabled(
+            supported_objectives.find(
+                image_processor::ObjectiveLensPower::OBJECTIVE_10x) ==
+            supported_objectives.end());
+        button_20x_->setDisabled(
+            supported_objectives.find(
+                image_processor::ObjectiveLensPower::OBJECTIVE_20x) ==
+            supported_objectives.end());
+        button_40x_->setDisabled(
+            supported_objectives.find(
+                image_processor::ObjectiveLensPower::OBJECTIVE_40x) ==
+            supported_objectives.end());
 
-    if (button == button_mitotic_.get()) {
-      SelectObjectiveForModel(ObjectiveLensPower::OBJECTIVE_40x);
+        // If the currently selected objective is unsupported
+        // and autodetection is off, reset the current objective.
+        if (supported_objectives.find(current_objective_) ==
+            supported_objectives.end()) {
+          auto arbitrary_element = supported_objectives.begin();
+          if (arbitrary_element != supported_objectives.end()) {
+            SelectObjectiveForModel(*arbitrary_element);
+          } else {
+            SelectObjectiveForModel(
+                ObjectiveLensPower::UNSPECIFIED_OBJECTIVE_LENS_POWER);
+          }
+        }
+      }
     }
   }
+
   active_model_type_button_ = dynamic_cast<QPushButton*>(button);
   const auto model_type = static_cast<image_processor::ModelType>(
       button->property(kModelTypeProperty).toInt());
@@ -548,40 +585,51 @@ void MainWindow::SetUpControlPanel() {
 }
 
 void MainWindow::SetUpModelTypeControls() {
-  // Model types
-  button_lyna_ = absl::WrapUnique(CreateAndConnectButton(
-      kLynaModelLabel, image_processor::ModelType::LYNA));
-  button_gleason_ = absl::WrapUnique(CreateAndConnectButton(
-      kGleasonModelLabel, image_processor::ModelType::GLEASON));
-  button_mitotic_ = absl::WrapUnique(CreateAndConnectButton(
-      kMitoticModelLabel, image_processor::ModelType::MITOTIC));
-  button_cervical_ = absl::WrapUnique(CreateAndConnectButton(
-      kCervicalModelLabel, image_processor::ModelType::CERVICAL));
+  const auto configured_model_types =
+      arm_app::GetArmConfig().GetConfiguredModelTypes();
+  for (const auto model_type : configured_model_types) {
+    model_buttons_.emplace(
+        model_type,
+        absl::WrapUnique(CreateAndConnectButton(
+            image_processor::ModelTypeToPrettyString(model_type).c_str(),
+            model_type)));
+  }
 
-  // Model classes
-  checkbox_gleason_gp_3_ = absl::WrapUnique(CreateAndConnectModelClassCheckbox(
-      kGleasonGp3, image_processor::GleasonClasses::GP_3));
-  checkbox_gleason_gp_4_ = absl::WrapUnique(CreateAndConnectModelClassCheckbox(
-      kGleasonGp4, image_processor::GleasonClasses::GP_4));
-  checkbox_gleason_gp_5_ = absl::WrapUnique(CreateAndConnectModelClassCheckbox(
-      kGleasonGp5, image_processor::GleasonClasses::GP_5));
-  checkbox_cervical_cin_1_ =
-      absl::WrapUnique(CreateAndConnectModelClassCheckbox(
-          kCervicalCin1, image_processor::CervicalClasses::CIN_1));
-  checkbox_cervical_cin_2_plus_ =
-      absl::WrapUnique(CreateAndConnectModelClassCheckbox(
-          kCervicalCin2Plus, image_processor::CervicalClasses::CIN_2_PLUS));
+  if (model_buttons_.find(ModelType::GLEASON) != model_buttons_.end()) {
+    checkbox_gleason_gp_3_ =
+        absl::WrapUnique(CreateAndConnectModelClassCheckbox(
+            kGleasonGp3, image_processor::GleasonClasses::GP_3));
+    checkbox_gleason_gp_4_ =
+        absl::WrapUnique(CreateAndConnectModelClassCheckbox(
+            kGleasonGp4, image_processor::GleasonClasses::GP_4));
+    checkbox_gleason_gp_5_ =
+        absl::WrapUnique(CreateAndConnectModelClassCheckbox(
+            kGleasonGp5, image_processor::GleasonClasses::GP_5));
+  }
 
+  if (model_buttons_.find(ModelType::CERVICAL) != model_buttons_.end()) {
+    checkbox_cervical_cin_1_ =
+        absl::WrapUnique(CreateAndConnectModelClassCheckbox(
+            kCervicalCin1, image_processor::CervicalClasses::CIN_1));
+    checkbox_cervical_cin_2_plus_ =
+        absl::WrapUnique(CreateAndConnectModelClassCheckbox(
+            kCervicalCin2Plus, image_processor::CervicalClasses::CIN_2_PLUS));
+  }
   model_type_layout_ = std::make_unique<QVBoxLayout>();
-  model_type_layout_->addWidget(button_lyna_.get());
-  model_type_layout_->addWidget(button_gleason_.get());
-  model_type_layout_->addWidget(checkbox_gleason_gp_3_.get());
-  model_type_layout_->addWidget(checkbox_gleason_gp_4_.get());
-  model_type_layout_->addWidget(checkbox_gleason_gp_5_.get());
-  model_type_layout_->addWidget(button_mitotic_.get());
-  model_type_layout_->addWidget(button_cervical_.get());
-  model_type_layout_->addWidget(checkbox_cervical_cin_1_.get());
-  model_type_layout_->addWidget(checkbox_cervical_cin_2_plus_.get());
+
+  for (const auto& button : model_buttons_) {
+    model_type_layout_->addWidget(button.second.get());
+
+    if (button.first == image_processor::ModelType::GLEASON) {
+      model_type_layout_->addWidget(checkbox_gleason_gp_3_.get());
+      model_type_layout_->addWidget(checkbox_gleason_gp_4_.get());
+      model_type_layout_->addWidget(checkbox_gleason_gp_5_.get());
+    }
+    if (button.first == image_processor::ModelType::CERVICAL) {
+      model_type_layout_->addWidget(checkbox_cervical_cin_1_.get());
+      model_type_layout_->addWidget(checkbox_cervical_cin_2_plus_.get());
+    }
+  }
 
   model_type_box_->setLayout(model_type_layout_.get());
   model_type_box_->setStyleSheet(kControlGroupLabelStyle);

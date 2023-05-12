@@ -30,6 +30,7 @@ syntax = "proto2";
 package arm_app;
 
 // Configuration parameters for a given model.
+// Next ID: 13
 message ModelConfig {
   //
   // Model key parameters
@@ -44,6 +45,12 @@ message ModelConfig {
 
   // Objective: 10x, 20x, 40x. This should match the objective strings.
   optional string objective = 2;
+
+  // Model path: absolute path to the model directory for the specified model.
+  optional string absolute_model_path = 11;
+
+  // Model version: Model version used in logging.
+  optional string model_version = 12;
 
   //
   // Prediction parameters

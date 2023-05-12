@@ -15,7 +15,6 @@
 # =============================================================================
 
 BASEDIR=$(dirname $0)
-MODELDIR=$BASEDIR/../share/arm_models
 
 mkdir -p ~/arm_logs/event_logs
 mkdir -p ~/arm_logs/snapshots
@@ -23,21 +22,6 @@ mkdir -p ~/arm_logs/snapshots
 ln -sfT ~/arm_logs/snapshots ~/Desktop/arm_snapshots
 
 QT_PLUGIN_PATH=/usr/local/Jenoptik/DijSDK/bin arm_inferer  \
-    --lyna_2x_directory $MODELDIR/lyna_2x  \
-    --lyna_4x_directory $MODELDIR/lyna_4x  \
-    --lyna_10x_directory $MODELDIR/lyna_10x  \
-    --lyna_20x_directory $MODELDIR/lyna_20x  \
-    --lyna_40x_directory $MODELDIR/lyna_40x  \
-    --gleason_2x_directory $MODELDIR/gleason_2x  \
-    --gleason_4x_directory $MODELDIR/gleason_4x  \
-    --gleason_10x_directory $MODELDIR/gleason_10x  \
-    --gleason_20x_directory $MODELDIR/gleason_20x  \
-    --mitotic_40x_directory $MODELDIR/mitotic_40x  \
-    --cervical_2x_directory $MODELDIR/cervical_2x  \
-    --cervical_4x_directory $MODELDIR/cervical_4x  \
-    --cervical_10x_directory $MODELDIR/cervical_10x  \
-    --cervical_20x_directory $MODELDIR/cervical_20x  \
-    --cervical_40x_directory $MODELDIR/cervical_40x  \
     --white_balance_red 2.4  \
     --white_balance_green 1.0  \
     --white_balance_blue 1.9  \
@@ -47,4 +31,3 @@ QT_PLUGIN_PATH=/usr/local/Jenoptik/DijSDK/bin arm_inferer  \
     --default_config_file $BASEDIR/../share/arm_configs/default_config.textproto \
     --custom_config_file $BASEDIR/../etc/arm_custom_config.textproto \
     $@
-
