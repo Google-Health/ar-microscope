@@ -14,6 +14,18 @@ for ARM. You can find the ARM research paper [here](https://www.nature.com/artic
 * Jenoptik ARM Modules including the ARM Camera & Microdisplay
 
 ### Desktop Hardware
+The machine the AR Microscope software is built on is referred to as the
+"Build Machine" and the machine the software runs on is referred to as the
+"Host Machine". We have validated different configurations for these machines.
+
+#### Build Machine
+Our build process has been tested on the following configurations:
+
+* Architecture: x86/64
+* CPU Platform: Intel Cascade Lake, AMD EPYC Milan processor or AMD EPYC Rome
+* OS: Ubuntu 22.04, Ubuntu 20.04, Debian 11 or Debian 12
+
+#### Host Machine
 Internally, we use an 6-core Intel Xeon Workstation with an NVIDIA Titan RTX
 with 64 GB of RAM and a 512 GB SSD as our ARM host machine.
 

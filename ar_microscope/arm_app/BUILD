@@ -40,8 +40,10 @@ qt5_library(
     srcs = ["main_window.cc"],
     moc_hdrs = ["main_window.h"],
     deps = [
+        ":arm_config",
         ":microdisplay",
         ":previewer",
+        "@com_google_absl//absl/container:btree",
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/flags:flag",
         "@com_google_absl//absl/memory",
@@ -134,6 +136,7 @@ qt5_library(
     deps = [
         ":arm_config_cc_proto",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/strings",
         "//image_processor:inferer","@com_google_protobuf//:protobuf",
         "@org_tensorflow//tensorflow/core:lib",

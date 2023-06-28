@@ -3,8 +3,9 @@
 WARNING: ARM uses proprietary Jenoptik drivers. Without access to these drivers,
 the build process will not work.
 
-NOTE: Ensure you have installed docker first:
-[Docker](https://docs.docker.com/engine/install/).
+NOTE: Ensure you have installed [Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+and followed the [post installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
+before proceeding.
 
 ## Setting Up Your ARM Machine
 
@@ -26,13 +27,18 @@ build ARM on the same machine that you will run the ARM software on.
 1. Run the following commands to make an installation directory for ARM:
 
   ```shell
-  foo@bar$ export ARM_DIR=$HOME/arm
-  foo@bar$ export ARM_DRIVERS_DIR=$ARM_DIR/arm_drivers
-  foo@bar$ export ARM_MODELS_DIR=$ARM_DIR/arm_models
-  foo@bar$ mkdir $ARM_DIR
-  foo@bar$ mkdir $ARM_DRIVERS_DIR
-  foo@bar$ mkdir $ARM_MODELS_DIR
+  foo@bar$ export ARM_DIR=$HOME/arm && export ARM_DRIVERS_DIR=$ARM_DIR/arm_drivers && export ARM_MODELS_DIR=$ARM_DIR/arm_models
+  foo@bar$ mkdir $ARM_DIR && mkdir $ARM_DRIVERS_DIR && mkdir $ARM_MODELS_DIR
   foo@bar$ cd $ARM_DRIVERS_DIR
+  ```
+  If you don't want to export the environment variables each time you build ARM
+  you can also add the following lines (in the exact order below) to your
+  bash profile.
+
+  ```shell
+  export ARM_DIR=$HOME/arm
+  export ARM_DRIVERS_DIR=$ARM_DIR/arm_drivers
+  export ARM_MODELS_DIR=$ARM_DIR/arm_models
   ```
 
 2. Clone ARM into the directory you just created:
@@ -51,6 +57,13 @@ WARNING: If you do not have access to ARM's models, or have not added your own,
 the build process will fail at the end. The models are not yet available, but
 will be soon via a request form.
 
+4. Copy ARM's models into the ARM Drivers directory as the ARM Model README.md
+  instructs you to:
+
+```shell
+  foo@bar$ cp -r $ARM_MODELS_DIR/arm_models $ARM_DRIVERS_DIR/ar_microscope/deb_package/usr/local/share/
+```
+
 
 ### Build the ARM Binary using docker
 
@@ -61,6 +74,7 @@ will be soon via a request form.
     -f $ARM_DRIVERS_DIR/ar_microscope/build/gpu.Dockerfile  \
     $ARM_DRIVERS_DIR/ar_microscope/build/
     ```
+
 2. Build the ARM docker image.
 
   ```shell
