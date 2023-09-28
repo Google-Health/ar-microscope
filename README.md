@@ -7,6 +7,14 @@ state-of-the-art CNNs for accurate cancer detection and classification.
 This Github repository contains all driver code and documentation
 for ARM. You can find the ARM research paper [here](https://www.nature.com/articles/s41591-019-0539-7).
 
+## ARM Models
+
+ARM's models are available but you must request access first.
+
+ARM's models are available for research evaluation. To apply for access please
+fill out this [form](https://docs.google.com/forms/d/1toPSDsLdYi9P3K1RDmN6t2qkbs8peC9KoGTTQTv90Ds/edit?resourcekey=0-nJub-Ce-kFDA6xSutKvXNA)
+and agree to the Terms of Service. 
+
 ## Requirements
 
 ### Microscope Hardware
@@ -102,7 +110,8 @@ in `ar_microscope/deb_package`.
 ### Adding custom models to ARM
 
 Adding custom models is not yet supported. ARM's models are available but you
-must request access first. A form to request the models is coming soon!
+must request access first. Please fill out this [form](https://docs.google.com/forms/d/1toPSDsLdYi9P3K1RDmN6t2qkbs8peC9KoGTTQTv90Ds/edit?resourcekey=0-nJub-Ce-kFDA6xSutKvXNA)
+for access.
 
 ## Acknowledgments
 
