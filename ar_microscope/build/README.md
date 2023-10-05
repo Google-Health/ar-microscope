@@ -50,7 +50,7 @@ build ARM on the same machine that you will run the ARM software on.
 3. Install ARM's dependencies. **This step is not yet possible!**
 
   ```shell
-  foo@bar$ mv $JENOPTIK_SDK_PATH/DijSDK-2.1.0.1261-Linux.deb $ARM_DRIVERS_DIR.
+  foo@bar$ mv $JENOPTIK_SDK_PATH/DijSDK-2.1.0.1261-Linux.deb $ARM_DRIVERS_DIR
   ```
 
 WARNING: If you do not have access to ARM's models, or have not added your own,
